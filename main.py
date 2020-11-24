@@ -5,6 +5,7 @@
 
 import pandas as pd
 import requests
+import json
 
 query = {
     "Collection": "IB",
@@ -13,6 +14,18 @@ query = {
     "EndTime": "2020-07-08 01:00:00"
 }
 resp = requests.get("http://127.0.0.1:5000/v1/resources/query/", params=query)
-df = pd.read_json(resp)
-
-print(df)
+print(resp)
+print(type(resp))
+resp_dict = json.loads(resp.text)
+print(resp_dict)
+# hdrs = resp.headers
+# print(hdrs)
+# resp_json = resp.json()
+# print(resp_json)
+# data = resp_json["results"]
+# print(data)
+# data_str = json.dumps(data)
+# print(pd.read_json(resp, orient='list'))
+df = pd.DataFrame(resp["results"])
+#
+# print(df)
