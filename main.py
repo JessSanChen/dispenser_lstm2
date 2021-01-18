@@ -6,15 +6,16 @@
 import pandas as pd
 import requests
 import json
+import matplotlib.pyplot as plt
 import datetime
 
 
 url = "http://127.0.0.1:5000/v1/resources/query/"
 
 payload="{\n    \"Collection\": \"IB\"," \
-        "\n    \"Device_ID\": \"IB_03_01\"," \
-        "\n    \"StartTime\": \"2020-07-08 00:00:00\"," \
-        "\n    \"EndTime\": \"2020-07-09 00:00:00\"\n}"
+        "\n    \"StartTime\": \"2020-10-01 00:00:00\"," \
+        "\n    \"EndTime\": \"2020-10-31 00:00:00\"\n}"
+
 headers = {
   'Content-Type': 'application/json'
 }
@@ -32,7 +33,16 @@ if __name__ == '__main__':
     df = read_data(url, payload, headers)
     df = df.set_index(['UploadTime'])
     df.index = pd.to_datetime(df.index)
-    df = df.resample('5min').sum()
+    df = df.resample('60min').sum()
     print(df)
 
+    description = df.describe().transpose()
+    print(description)
+
+    plot_cols = ['Refilling', 'Heating', 'Cooling',
+                 'HotTemp', 'TDS', 'WaterLevel', 'ColdTemp', 'WarmTemp', 'Usage_CC']
+    plot_features = df[plot_cols]
+    plot_features.index = df.index
+    _ = plot_features.plot(subplots=True)
+    plt.show()
 
